@@ -1,0 +1,30 @@
+{
+  "name": "planet-forge",
+  "productName": "Planet Forge",
+  "version": "1.0.0",
+  "description": "Endless procedural planets: a live desktop app and wallpaper.",
+  "main": "main.js",
+  "author": "Planet Forge",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "wallpaper": "electron . --wallpaper",
+    "dist": "electron-builder",
+    "dist:win": "electron-builder --win",
+    "dist:mac": "electron-builder --mac",
+    "dist:linux": "electron-builder --linux"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "app.planetforge.desktop",
+    "productName": "Planet Forge",
+    "files": ["main.js", "preload.js", "app/**/*", "build/icon.png", "package.json"],
+    "directories": { "output": "dist" },
+    "win": { "target": ["nsis", "portable"], "icon": "build/icon.png" },
+    "mac": { "target": ["dmg"], "category": "public.app-category.entertainment", "icon": "build/icon.png" },
+    "linux": { "target": ["AppImage", "deb", "pacman"], "category": "Graphics", "icon": "build/icon.png" }
+  }
+}
