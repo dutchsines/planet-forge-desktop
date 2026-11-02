@@ -2820,7 +2820,7 @@ function compile(type, src) {
   if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
     const log = gl.getShaderInfoLog(sh), lines = src.split("\n");
     const m = /ERROR: \d+:(\d+)/.exec(log); const ln = m ? +m[1] : 0;
-    fail("Shader compile error:\n" + log + (ln ? "\n\nnear line " + ln + ":\n" + lines.slice(Math.max(0, ln - 3), ln + 2).join("\n") : ""));
+    fail("Shader compile error:\n" + (log || "(the graphics driver gave no details: it gave up compiling this large shader)") + (log ? "" : "\n\nTry: update your graphics driver; in the desktop app start it with --angle=gl or --angle=d3d11; or lower Graphics quality.") + (ln ? "\n\nnear line " + ln + ":\n" + lines.slice(Math.max(0, ln - 3), ln + 2).join("\n") : ""));
     return null;
   }
   return sh;

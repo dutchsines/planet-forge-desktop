@@ -24,3 +24,9 @@ particular setup, it falls back to a bottom-most click-through window; `--no-att
 ## Known unknowns
 This was written without a Windows machine to test on. The wallpaper attach (PowerShell + WorkerW) is the part most likely to
 need a tweak on Windows 11 24H2; tell me what you see.
+
+## If it shows "Shader compile error" or takes minutes to load
+Windows' default graphics layer (Direct3D via ANGLE) can choke on the big planet shader. The app now starts on ANGLE's OpenGL backend,
+and if the page still reports a shader error it relaunches once on Direct3D and remembers whichever works (saved in settings.json).
+To force one by hand: `"Planet Forge.exe" --angle=gl` or `--angle=d3d11` (also `--angle=vulkan`, `--angle=default`).
+Also worth doing: update the graphics driver (NVIDIA / AMD / Intel) and make sure the app isn't set to run on a different GPU than your display.

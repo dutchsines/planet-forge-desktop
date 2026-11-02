@@ -9,6 +9,12 @@ const argv = process.argv.slice(1);
 const flag = n => argv.includes("--" + n);
 const val = n => { const a = argv.find(x => x.startsWith("--" + n + "=")); return a ? a.split("=")[1] : null; };
 
+// Windows: the planet shader is huge. ANGLE's default Direct3D backend can take minutes to compile it, or give up with an empty error.
+// So Windows starts on ANGLE's OpenGL backend (the driver's own compiler: fast), and if the page still reports a shader/WebGL failure the app
+// relaunches once on the other backend and remembers what works. Override by hand with --angle=gl | d3d11 | vulkan | default.
+let earlyCfg = {}; try { earlyCfg = JSON.parse(fs.readFileSync(path.join(app.getPath("userData"), "settings.json"), "utf8")); } catch (e) {}
+const ANGLE = val("angle") || earlyCfg.angle || (process.platform === "win32" ? "gl" : "default");
+if (ANGLE !== "default") app.commandLine.appendSwitch("use-angle", ANGLE);
 // GPU: ask Chromium for the fast path. A planet shader this size wants the real GPU, not a fallback.
 app.commandLine.appendSwitch("ignore-gpu-blocklist");
 app.commandLine.appendSwitch("enable-gpu-rasterization");
@@ -91,6 +97,20 @@ function attachWin(w, d) {
     execFile("powershell.exe", ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", f, id, String(r.x - minX), String(r.y - minY), String(r.width), String(r.height)], { timeout: 15000, windowsHide: true }, () => {});
   } catch (e) {}
 }
+let gpuWatch = null;
+function watchGpu(w) {                                             // shader/WebGL failure on this backend: try the other one (once each), then stay put
+  if (process.platform !== "win32" || val("angle") || gpuWatch) return;
+  let n = 0; gpuWatch = setInterval(() => {
+    if (w.isDestroyed() || ++n > 60) { clearInterval(gpuWatch); return; }
+    w.webContents.executeJavaScript("[window.PFERR||'', window.PFFRAMES|0]").then(([err, fr]) => {
+      if (fr > 3) { clearInterval(gpuWatch); if (ANGLE !== (earlyCfg.angleOk || "")) { cfg.angleOk = ANGLE; cfg.angle = ANGLE; save(); } return; }
+      if (!/shader|webgl|context/i.test(err)) return;
+      clearInterval(gpuWatch);
+      const bad = new Set([...(cfg.angleBad || []), ANGLE]), next = ["gl", "d3d11"].find(m => !bad.has(m));
+      cfg.angleBad = [...bad]; if (next) { cfg.angle = next; save(); app.relaunch(); app.exit(0); } else save();
+    }).catch(() => {});
+  }, 3000);
+}
 function makeWindow(d, first) {
   const common = { backgroundColor: "#000000", show: false, autoHideMenuBar: true, title: "Planet Forge", icon: path.join(__dirname, "build", "icon.png"),
     webPreferences: { preload: path.join(__dirname, "preload.js"), contextIsolation: true, nodeIntegration: false, sandbox: true, backgroundThrottling: !cfg.wallpaper, spellcheck: false } };
@@ -113,7 +133,7 @@ function makeWindow(d, first) {
   w.once("ready-to-show", () => { if (!cfg.wallpaper) return w.show(); sendBehind(w, () => { if (!w.isDestroyed()) { w.showInactive(); setTimeout(() => sendBehind(w), 400); setTimeout(() => attachWin(w, d), 900); } }); });
   w.webContents.on("render-process-gone", () => { setTimeout(createWindows, 1500); });          // GPU or renderer crash: start again instead of leaving a dead window
   w.webContents.on("did-fail-load", () => setTimeout(() => !w.isDestroyed() && w.loadFile(INDEX, { query: pageQuery(first) }), 2000));
-  w.webContents.on("did-finish-load", () => applyPageSettings(w));
+  w.webContents.on("did-finish-load", () => { applyPageSettings(w); watchGpu(w); });
   w.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
   w.webContents.on("will-navigate", e => e.preventDefault());
   w.loadFile(INDEX, { query: pageQuery(first) });
