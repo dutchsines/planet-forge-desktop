@@ -340,7 +340,7 @@
   #welcome .wk { font-size:11px; letter-spacing:.5em; text-transform:uppercase; color:#ffb98a; } #welcome h2 { margin:4px 0 12px; font-weight:200; font-size:clamp(30px,5vw,46px); letter-spacing:.14em; text-transform:uppercase; color:#f4f8ff; line-height:1; } #welcome h2 b { font-weight:900; letter-spacing:.08em; margin-left:.25em; background:linear-gradient(95deg,#ffd27a,#ff8a5c 45%,#e0508f 72%,#8a6cff); -webkit-background-clip:text; background-clip:text; color:transparent; }
   #welcome .wl { margin:0 auto 14px; max-width:56ch; font-size:14px; line-height:1.6; color:#b9c8e6; } #welcome .wg { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:8px; margin:0 0 14px; text-align:left; } #welcome .wg > div { padding:10px 11px; border-radius:12px; background:rgba(120,170,255,.08); border:1px solid rgba(130,170,255,.16); } #welcome .wg i { font-style:normal; font-size:20px; display:block; margin-bottom:3px; } #welcome .wg b { display:block; font-size:13px; color:#fff; margin-bottom:2px; } #welcome .wg span { font-size:11.5px; line-height:1.45; color:#9fb4dc; }
   #welcome .wkeys { display:flex; flex-wrap:wrap; gap:6px 14px; justify-content:center; font-size:12px; color:#9fb4dc; margin-bottom:12px; } #welcome kbd { font:inherit; font-size:11px; border:1px solid rgba(150,175,220,.35); border-radius:4px; padding:1px 6px; margin-right:3px; color:#c4d4f5; background:rgba(0,0,0,.25); }
-  #welcome .wnote { font-size:12.5px; color:#b9f0c8; background:rgba(111,224,138,.1); border:1px solid rgba(111,224,138,.28); border-radius:10px; padding:8px 12px; margin-bottom:16px; line-height:1.5; } #welcome #wGo { all:unset; cursor:pointer; padding:12px 40px; border-radius:999px; font-size:15px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#fff; background:linear-gradient(95deg,#ff9a4a,#e0508f 60%,#8a6cff); box-shadow:0 8px 28px rgba(224,80,143,.4); } #welcome #wGo:hover { filter:brightness(1.12); }
+  #welcome .wnote { font-size:12.5px; color:#b9f0c8; background:rgba(111,224,138,.1); border:1px solid rgba(111,224,138,.28); border-radius:10px; padding:8px 12px; margin-bottom:16px; line-height:1.5; } #welcome #wup { text-align:left; margin:0 0 12px; border:1px solid rgba(150,175,220,.22); border-radius:12px; background:rgba(120,150,220,.06); } #welcome #wup h3 { margin:0; padding:9px 12px 4px; font-size:11px; font-weight:600; letter-spacing:.3em; text-transform:uppercase; color:#ffb98a; } #welcome #wup .wul { max-height:112px; overflow:auto; padding:2px 12px 10px; font-size:12.5px; line-height:1.5; color:#b9c8e6; } #welcome #wup .wuv { margin:8px 0 2px; color:#e8f0ff; font-weight:600; } #welcome #wup .wuv em { font-style:normal; font-size:10px; letter-spacing:.12em; background:#6fe08a; color:#06210f; border-radius:6px; padding:1px 6px; margin-left:6px; } #welcome #wup ul { margin:2px 0 0; padding-left:18px; } #welcome #wGo { all:unset; cursor:pointer; padding:12px 40px; border-radius:999px; font-size:15px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#fff; background:linear-gradient(95deg,#ff9a4a,#e0508f 60%,#8a6cff); box-shadow:0 8px 28px rgba(224,80,143,.4); } #welcome #wGo:hover { filter:brightness(1.12); }
   @media (max-width:760px) { #title .tmenu button { padding:10px 18px; } #title .tmenu { gap:5px; } }
   #title.go { opacity:0; transform:scale(1.06); filter:blur(6px); pointer-events:none; } #title.off { display:none; }
   #title .tbg { position:absolute; inset:-3%; background:#02040a center/cover no-repeat; animation:tkb 38s ease-in-out infinite alternate; }
@@ -490,7 +490,8 @@
   <p class="wl">Planet Forge grows a whole world from nothing and lets you watch the entire story: molten rock cooling into oceans and continents, life taking hold, minds appearing, and nations reaching for the stars. Every world is different, and none of it is scripted.</p>
   <div class="wg"><div><i>🌋</i><b>A living planet</b><span>Drifting plates, volcanoes, impacts, weather, seasons and a climate that really moves heat around.</span></div><div><i>🌱</i><b>Life</b><span>Appears only when conditions allow, branches into species, survives (or doesn't) mass extinctions.</span></div><div><i>🧠</i><b>Minds</b><span>Rare. When they arise, nations grow, trade, fight, invent, and may leave the planet.</span></div><div><i>🎛</i><b>You</b><span>Watch, speed time up, read the maps and graphs, or nudge the world: a comet, a volcano, a warmer sun.</span></div></div>
   <div class="wkeys"><span><kbd>Drag</kbd> turn</span><span><kbd>Wheel</kbd> zoom</span><span><kbd>Space</kbd> pause</span><span><kbd>Esc</kbd> menu</span><span><kbd>E</kbd> endless</span><span><kbd>?</kbd> all keys</span></div>
-  <div class="wnote">♾ <b>Endless mode is on</b>: this world will never restart by itself. Press <kbd>E</kbd> or the Endless button to turn it off.</div>
+  <div id="wup"></div>
+  <div class="wnote" id="wnote"></div>
   <button id="wGo">Begin</button></div></div>
 <div id="fade"></div>
 <div id="tree" class="panel"><div class="gh"><span>Tree of life</span><button id="treeC">Close (Esc)</button></div><canvas id="treeCv"></canvas><div id="treeN" class="sub"></div><div id="formCard"></div></div>
@@ -526,6 +527,36 @@ const FALL = { stony: { land: [0.42, 0.38, 0.34], sea: [0.55, 0.78, 0.72], sd: [
 const NP = 14, NV = 10;                              // tectonic plates
 const TAU = Math.PI * 2;
 const Q = new URLSearchParams(location.search);
+const PF_BUILD = 2026110404;                                      // bumped on every release (release.sh); the in-game updater compares this with version.json
+const PF_UPDATES = [                                              // newest first: add an entry for every release, it shows in the welcome box
+  { b: 2026110404, d: "4 Nov 2026", t: ["Public release: Endless mode now starts off, so each world plays for a while and then a new one is rolled. Press E to keep a world going forever.", "In-game updates: the desktop and Android apps can fetch new versions from Settings → Interface & output.", "City lights work on younger civilisations and over a wider range of climates, and the night-side glow is dimmer.", "Orbital lasers and rods are only ever fired by a real, visible spaceship with a clear line to the target.", "Commercial flights leave at more random times, and a few more of them.", "A What's new box on the welcome screen lists every update."] },
+  { b: 2026110301, d: "Early Nov 2026", t: ["Aeroplanes and jets with contrails that follow the weather, flying at cloud height between nations' capitals, around war zones and never to or from a nation at war.", "Ships: sail boats, cargo ships, cruise liners and warships that sail real sea routes between ports, and hide under cloud.", "Nations that fall now blow up with their capital and leave a skull and crossbones for a while.", "Wars wind down properly: fleets sail home and effects finish. New weapons, and all war effects run at full frame rate and follow time speed.", "Capitals flooded by changing land must move to dry land or the nation withers. Moon bases need a line of sight to the capital.", "Nation dots are split: era colour below, health above, pulsing red at war.", "A full code audit: crash and balance fixes."] },
+];
+const PFU = {                                                       // in-game updates: the desktop and Android apps fetch the newest page from the public release repo and keep it next to the bundled one
+  repo: "dutchsines/planet-forge-desktop", branches: ["main", "master"], state: "idle", info: null, text: null, msg: "", ui: [],
+  get can() { try { return !!(window.pfApp && typeof window.pfApp.saveUpdate === "function") || !!(window.AndroidBridge && typeof window.AndroidBridge.saveUpdate === "function"); } catch (e) { return false; } },
+  set(state, msg) { this.state = state; this.msg = msg; this.ui.forEach(f => { try { f(); } catch (e) {} }); },
+  async get_(file) { let last = null; for (const b of this.branches) { try { const r = await fetch(`https://raw.githubusercontent.com/${this.repo}/${b}/app/${file}?t=${Date.now()}`, { cache: "no-store" }); if (r.ok) return r; last = new Error("HTTP " + r.status); } catch (e) { last = e; } } throw last || new Error("offline"); },
+  async check(silent) {
+    if (!this.can || this.state === "checking" || this.state === "installing") return;
+    this.set("checking", "Checking for updates…");
+    try { const v = await (await this.get_("version.json")).json(); try { localStorage.setItem("pfUpdChk", String(Date.now())); } catch (e) {}
+      if (v && +v.build > PF_BUILD) { this.info = v; this.set("available", `Update ${v.name || v.build} is ready to download.${v.notes ? " " + v.notes : ""}`); if (silent) flash("A new version of Planet Forge is available: Settings → Interface & output"); }
+      else this.set("current", `You have the latest version (build ${PF_BUILD}).`);
+    } catch (e) { this.set("idle", silent ? "" : "Couldn't reach the update server. Check your connection and try again."); }
+  },
+  async install() {
+    if (this.state !== "available" || !this.info) return; const v = this.info; this.set("installing", "Downloading…");
+    try { const text = await (await this.get_("index.html")).text();
+      if (text.length < 200000 || !new RegExp("PF_BUILD\\s*=\\s*" + (+v.build) + "\\b").test(text)) throw new Error("the download didn't match the version file");
+      if (v.sha256 && window.crypto && crypto.subtle) { const h = [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text)))].map(x => x.toString(16).padStart(2, "0")).join(""); if (h !== String(v.sha256).toLowerCase()) throw new Error("the download is damaged (checksum mismatch)"); }
+      const ok = window.pfApp && window.pfApp.saveUpdate ? await window.pfApp.saveUpdate(text, +v.build) : window.AndroidBridge.saveUpdate(text, +v.build);
+      if (!ok) throw new Error("the app couldn't store the update"); this.set("ready", "Update installed. Restart to use it: your world is saved first.");
+    } catch (e) { this.set("available", "Update failed: " + (e && e.message || e) + ". Try again."); }
+  },
+  restart() { try { PFB.save(); } catch (e) {} try { if (window.pfApp && window.pfApp.applyUpdate) window.pfApp.applyUpdate(); else window.AndroidBridge.applyUpdate(); } catch (e) {} },
+};
+setTimeout(() => { let last = 0; try { last = +localStorage.getItem("pfUpdChk") || 0; } catch (e) {} if (PFU.can && Date.now() - last > 6 * 3600e3) PFU.check(true); }, 25000);      // once every six hours, quietly
 
 /* ------------------------------------------------------------------ small helpers */
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a);
@@ -5162,6 +5193,9 @@ canvas.addEventListener("webglcontextrestored", () => location.reload());
   R(g, "Panel opacity", () => S.panelA, v => { S.panelA = v; applyPanelA(); }, 0.2, 0.95, 0.01);
   T(g, "Show FPS", () => S.showFps, v => S.showFps = v);
   B(g, [["Reset all graphics", () => { Object.assign(S, PRESETS.high, { gfxPreset: "high", tFps: 60, fxAur: true, fxThu: true, fxCity: true, showFps: true, panelA: 0.62, atmo: true, clouds: true, stars: 1, exposure: 0.85, sat: 1.30 }); applyPanelA(); updateButtons(); }]]);
+  if (PFU.can) { const box = mk("div", "row", `<label style="flex:1;white-space:normal;line-height:1.35"></label>`), lab = box.firstChild, bt = mk("button", null, "Check for updates");
+    const render = () => { lab.textContent = `Updates · build ${PF_BUILD}. ${PFU.msg}`; bt.textContent = { available: "Download update", installing: "Downloading…", ready: "Restart now", checking: "Checking…" }[PFU.state] || "Check for updates"; bt.disabled = PFU.state === "checking" || PFU.state === "installing"; };
+    bt.onclick = () => { if (PFU.state === "available") PFU.install(); else if (PFU.state === "ready") PFU.restart(); else PFU.check(false); bt.blur(); }; PFU.ui.push(render); render(); box.appendChild(bt); g.appendChild(box); }
   colB.appendChild(g);
   SETPG.recount();
 }
@@ -6516,7 +6550,7 @@ function wfDraw(K, tr, hs) {                                       // contrails:
 }
 function wfAir(K) {
   const { W, dt, cx, P, scr, glow, lite } = K, A = WF.air;
-  if (dt > 0 && S.traffic !== false) { WF.nxA -= dt; if (WF.nxA <= 0) { WF.nxA = 3 + Math.random() * 4; if (A.filter(p => !p.st).length < (lite ? 3 : 5)) wfSpawnPlane(W); } }
+  if (dt > 0 && S.traffic !== false) { WF.nxA -= dt; if (WF.nxA <= 0) { WF.nxA = Math.random() < 0.25 ? 0.4 + Math.random() * 1.4 : 1.5 + Math.pow(Math.random(), 1.6) * 7.5; if (A.filter(p => !p.st).length < (lite ? 4 : 6)) wfSpawnPlane(W); } }
   const advect = (tr) => { for (let k = tr.length - 1; k >= 0; k--) { const q = tr[k]; q.t += dt; if (q.t > 20) { tr.splice(k, 1); continue; } if (dt > 0) { const wd = wfWind(q.d), c = Math.max(0.2, Math.sqrt(1 - q.d[1] * q.d[1])); const [la, lo] = wfLL(q.d), la2 = clamp(la + wd[1] * dt * 0.012, -1.5, 1.5), lo2 = lo + wd[0] * dt * 0.012 / c; q.d = [Math.cos(la2) * Math.cos(lo2), Math.sin(la2), Math.cos(la2) * Math.sin(lo2)]; } } };
   cx.globalCompositeOperation = "source-over"; cx.lineCap = "round";
   for (const o of WF.old) { advect(o.tr); wfDraw(K, o.tr); } WF.old = WF.old.filter(o => o.tr.length);
@@ -7028,11 +7062,14 @@ const TITLE = { on: false, sel: 0, mode: "title", box: null };
   /* ---- welcome box ---- */
   const wel = $("welcome"), closeWelcome = () => { if (!wel.classList.contains("on")) return; wel.classList.remove("on"); S.frozen = false; try { updateButtons(); } catch (e) {} };
   $("wGo").onclick = closeWelcome;
+  { let seen = 0; try { seen = +localStorage.getItem("pfSeenBuild") || 0; } catch (e) {}
+    $("wup").innerHTML = `<h3>Updates</h3><div class="wul">${PF_UPDATES.map(u => `<div class="wuv">${u.d}${seen && u.b > seen ? "<em>NEW</em>" : ""}</div><ul>${u.t.map(x => `<li>${x}</li>`).join("")}</ul>`).join("")}</div>`;
+    try { localStorage.setItem("pfSeenBuild", String(PF_BUILD)); } catch (e) {} }
   /* ---- start / pause ---- */
   const beginGame = (seed, age, intro) => {
     if (T.classList.contains("go")) return; closeBox(); T.classList.add("go"); TITLE.on = false; document.body.classList.remove("intitle");
     newWorld(seed, age);
-    if (intro) { S.endless = true; S.worldClock = 0; S.frozen = true; try { updateButtons(); } catch (e) {} wel.classList.add("on"); setTimeout(() => $("wGo").focus(), 50); } else S.frozen = false;
+    if (intro) { S.endless = Q.get("endless") === "1"; S.worldClock = 0; $("wnote").innerHTML = S.endless ? `♾ <b>Endless mode is on</b>: this world will never restart by itself. Press <kbd>E</kbd> or the Endless button to turn it off.` : `⏳ <b>Endless mode is off</b>: ${S.endlessSecs > 0 ? `each world plays for about ${Math.round(S.endlessSecs / 60)} minutes (the timer shows at the top), then a new one is rolled` : "worlds don't restart on a timer"}. Press <kbd>E</kbd> or the Endless button to keep this world going forever.`; S.frozen = true; try { updateButtons(); } catch (e) {} wel.classList.add("on"); setTimeout(() => $("wGo").focus(), 50); } else S.frozen = false;
     setTimeout(() => T.classList.add("off"), 1000);
   };
   const leaveMenu = () => { closeBox(); TITLE.on = false; document.body.classList.remove("intitle"); T.classList.remove("pause"); T.classList.add("off"); S.frozen = !!TITLE.wasFrozen; try { updateButtons(); } catch (e) {} last = performance.now(); };

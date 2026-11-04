@@ -35,7 +35,11 @@ if (val("fps")) cfg.fps = Math.max(5, Math.min(120, +val("fps") || 30));
 let wins = [], tray = null, onBattery = false, otherFullscreen = false, fsSupported = true, recording = false;
 const primary = () => wins.find(w => !w.isDestroyed());
 const live = () => wins.filter(w => !w.isDestroyed());
-const INDEX = path.join(__dirname, "app", "index.html");
+const BUNDLED = path.join(__dirname, "app", "index.html");
+const UPD_DIR = path.join(app.getPath("userData"), "update"), UPD = path.join(UPD_DIR, "index.html");
+const buildOf = f => { try { const m = /PF_BUILD\s*=\s*(\d+)/.exec(fs.readFileSync(f, "utf8")); return m ? +m[1] : 0; } catch (e) { return 0; } };
+const pickIndex = () => fs.existsSync(UPD) && buildOf(UPD) > buildOf(BUNDLED) ? UPD : BUNDLED;     // a downloaded update wins only while it is newer than the page this install shipped with
+let INDEX = pickIndex();
 const eachPage = js => live().forEach(w => w.webContents.executeJavaScript(js).catch(() => {}));
 
 function wallpaperFps() { return otherFullscreen && cfg.autoPause ? 2 : onBattery && cfg.pauseOnBattery ? Math.min(cfg.fps, 15) : cfg.fps; }
@@ -245,6 +249,12 @@ function hookDownloads(ses) {
 }
 
 ipcMain.on("pf-wallpaper", (e, on) => { if (!!on !== cfg.wallpaper) setWallpaper(!!on); });       // the in-game Wallpaper button / W key
+ipcMain.handle("pf-save-update", (e, text, build) => {            // in-game updater: keep the downloaded page in the user data folder
+  try { if (typeof text !== "string" || text.length < 200000 || text.length > 40e6 || !(+build > buildOf(BUNDLED))) return false;
+    if (!new RegExp("PF_BUILD\\s*=\\s*" + (+build) + "\\b").test(text)) return false;
+    fs.mkdirSync(UPD_DIR, { recursive: true }); fs.writeFileSync(UPD + ".tmp", text); fs.renameSync(UPD + ".tmp", UPD); return true; } catch (err) { return false; }
+});
+ipcMain.on("pf-apply-update", () => { INDEX = pickIndex(); newWorlds(); });
 ipcMain.on("pf-quit", () => { app.isQuitting = true; app.quit(); });                              // the title screen's Quit button
 ipcMain.on("pf-recording", (e, on) => { recording = !!on; buildMenu(); });                          // the page tells us when a recording starts or stops
 
