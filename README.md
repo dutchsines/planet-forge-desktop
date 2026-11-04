@@ -43,8 +43,6 @@ You mostly watch, speed time up, read the maps and graphs, and sometimes poke th
 - Wallpaper Engine / Lively kit
 - The desktop and Android apps can update themselves from inside the game.
 
-*(Download link: PUT LINK HERE)*
-
 **How to play**
 
 1. Press **Play** and read the welcome box. A world starts forming straight away.
@@ -86,4 +84,3 @@ Endless mode (E) lets a world run on without ever restarting by itself, and make
 
 I'm actively updating it, and the welcome screen lists what's new in each update. Bugs, ideas, weird worlds and screenshots are all welcome in the comments.
 
-*(Screenshots here)*
